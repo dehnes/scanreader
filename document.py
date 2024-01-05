@@ -1,4 +1,7 @@
 import logging
+
+logger = logging.getLogger(__name__)
+
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -12,9 +15,6 @@ from config import CONFIG
 from datematching import get_archive_dates
 from log_messaging import comp_compl, comp_start
 from matching import match_correspondent, match_doctype, match_member
-
-logging.config.fileConfig("logging.conf")
-logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -32,6 +32,7 @@ class Document:
     _modified_at: datetime.date = field(default_factory=datetime.now)
 
     def run_matching(self):
+        logger.info(comp_start(f"Running Matching in {self.source_file}"))
         self.run_ocr()
         self.export_ocr_content()
         # Identify Date
@@ -40,19 +41,24 @@ class Document:
         self.business_partner = match_correspondent(self.ocr_content)
         self.doctype = match_doctype(self.ocr_content)
         self.member = match_member(self.ocr_content)
+        logger.info(comp_compl(f"Running Matching in {self.source_file}"))
 
     def run_ocr(self) -> str:
         # https://www.geeksforgeeks.org/python-reading-contents-of-pdf-using-ocr-optical-character-recognition/
         logger.info(comp_start(f"Running OCR in {self.source_file}"))
         img_files = []
         pdf_pages = convert_from_path(self.source_file, 500)
+        logger.debug(comp_start("  Converting pages ti image files"))
         for page_enumeration, page in enumerate(pdf_pages, start=1):
             filename = f"tmp/page_{page_enumeration:03}.jpg"
             page.save(filename, "JPEG")
             img_files.append(filename)
+        logger.debug(comp_compl("  Converting pages ti image files"))
+        logger.debug(comp_start("  Grabbing text from image files"))
         text = ""
         for img in img_files:
             text = f"{text} {str(pytesseract.image_to_string(Image.open(img)))}"
+        logger.debug(comp_compl("  Grabbing text from image files"))
         logger.info(comp_compl(f"Running OCR in {self.source_file}"))
         self.ocr_content = text
 

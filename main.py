@@ -1,17 +1,17 @@
 import glob
 import logging
-import logging.config
 import os
 import shutil
 from pathlib import Path
 
 from PIL import Image
 
+import logging_config
 from config import CONFIG
 from document import Document
 from log_messaging import comp_compl, comp_start
 
-logging.config.fileConfig("logging.conf")
+logging_config = logging_config.config_logging()
 logger = logging.getLogger(__name__)
 
 
@@ -48,7 +48,7 @@ def analyze_files(files):
         clear_folder(CONFIG.paths.temp_path)
         d = Document(source_file=file)
         d.run_matching()
-        logger.info(d.compose_file_name())
+        d.compose_file_name()
     logger.info(comp_compl("Analyzing all Files"))
 
 

@@ -2,6 +2,8 @@ import datetime as dt
 import logging
 import re
 
+logger = logging.getLogger(__name__)
+
 MONTHS_DICT = {
     "1": 1,
     "01": 1,
@@ -56,8 +58,6 @@ def get_month_by_str(month: str) -> int:
 
 
 def get_date_tuples_from_text(text: str = "", test_mode: bool = False):
-    l = logging.getLogger(f"{__name__}.get_date_tuples_from_text")
-
     if test_mode:
         text = search_text
     results = []
@@ -79,9 +79,9 @@ def get_date_tuples_from_text(text: str = "", test_mode: bool = False):
 
     if results:
         for r in results:
-            l.debug(f"Found: {r}")
+            logger.debug(f"Found: {r}")
     else:
-        l.debug("Nothing found")
+        logger.debug("Nothing found")
     return results
 
 
