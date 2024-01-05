@@ -2,14 +2,8 @@ from config import CONFIG
 
 
 def comp_start(msg: str = "") -> str:
-    if msg == "":
-        return ""
-    else:
-        return msg + CONFIG.log_str.started
+    return msg + CONFIG.log_str.started if msg else ""
 
 
 def comp_compl(msg: str = "") -> str:
-    if msg == "":
-        return ""
-    else:
-        return msg + CONFIG.log_str.comp
+    return msg + CONFIG.log_str.comp if msg else ""

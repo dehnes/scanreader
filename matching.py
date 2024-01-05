@@ -18,10 +18,7 @@ class Catalogue:
 
     def in_context(self, el, context: str = "") -> bool:
         el = el.lower()
-        if context.find(el) >= 0:
-            return True
-        else:
-            return False
+        return el in context
 
     def match(self, context: str) -> str:
         context = context.lower()
@@ -30,16 +27,12 @@ class Catalogue:
         found = False
         for k in self.cat.keys():
             for l in self.cat[k]:  # OR Elements
-                ands = True
-                for i in l:  # AND Elements
-                    if not self.in_context(i, context):
-                        ands = False
-                        break
+                ands = all(self.in_context(i, context) for i in l)
                 if ands:
                     return k
 
 
-def match(context: str, catalogue_dict):
+def match(context: str, catalogue_dict: dict) -> str:
     cat = Catalogue(catalogue=catalogue_dict)
     return cat.match(context)
 

@@ -16,15 +16,15 @@ from matching import match_correspondent, match_doctype, match_member
 
 
 def read_files():
-    input = CONFIG.paths.input_path
-    LOGGER.info(comp_start(f"Reading all Files in '{input}'"))
-    files = glob.glob(input + "*")
+    input_path = CONFIG.paths.input_path
+    LOGGER.info(comp_start(f"Reading all Files in '{input_path}'"))
+    files = glob.glob(f"{input_path}*")
     paths = []
     for f in files:
         p = Path(f)
         if p.is_file():
             paths.append(f)
-    LOGGER.info(comp_compl(f"Reading all Files in '{input}'"))
+    LOGGER.info(comp_compl(f"Reading all Files in '{input_path}'"))
     return paths
 
 
@@ -39,7 +39,7 @@ def ocr_file(p: Path):
         img_files.append(filename)
     text = ""
     for img in img_files:
-        text = text + " " + str(((pytesseract.image_to_string(Image.open(img)))))
+        text = f"{text} {str(pytesseract.image_to_string(Image.open(img)))}"
     LOGGER.info(comp_compl(f"Running OCR in {p}"))
     return text
 
@@ -54,7 +54,7 @@ def clear_folder(folder: str):
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
         except Exception as e:
-            print("Failed to delete %s. Reason: %s" % (file_path, e))
+            LOGGER.error((f"Failed to delete {file_path}. Reason: {e}"))
     LOGGER.info(comp_compl(f"Clearing folder '{folder}'"))
 
 
@@ -83,10 +83,10 @@ def compose_file_name(
 
     f = f"{date_str}{ms}{correspondent}{ms}{doc_type}"
     if title != "":
-        f = f + f"{ms}{title}"
+        f = f"{f}{ms}{title}"
     if member != "":
-        f = f + f"{ms}{member}"
-    f = f + f".{extension}"
+        f = f"{f}{ms}{member}"
+    f = f"{f}.{extension}"
     return f
 
 

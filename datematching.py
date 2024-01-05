@@ -57,7 +57,7 @@ def get_month_by_str(month: str) -> int:
 
 
 def get_date_tuples_from_text(text: str = "", test_mode: bool = False):
-    l = logging.getLogger(__name__ + ".get_date_tuples_from_text")
+    l = logging.getLogger(f"{__name__}.get_date_tuples_from_text")
 
     if test_mode:
         text = search_text
@@ -88,10 +88,7 @@ def get_date_tuples_from_text(text: str = "", test_mode: bool = False):
 
 def convert_to_archive_format(input) -> str:
     # create the Year
-    if input[2] == "":
-        y = f"{dt.date.today().year}"
-    else:
-        y = input[2]
+    y = f"{dt.date.today().year}" if input[2] == "" else input[2]
     y = int(y)
     if y >= 1000:
         y = f"{y}"
@@ -113,25 +110,20 @@ def convert_to_archive_format(input) -> str:
     d = input[0]
     if len(d) == 2:
         d = d
-    elif d == " ":
+    elif d == " " or len(d) != 1:
         d = "01"  # TODO ggf 00 für undefined
-    elif len(d) == 1:
-        d = f"0{d}"
     else:
-        d = "01"  # TODO ggf 00 für undefined
-
+        d = f"0{d}"
     return y + m + d
 
 
 def get_archive_dates(context: str):
     tpls = get_date_tuples_from_text(context)
-    ar_dates = []
-    for t in tpls:
-        ar_dates.append(convert_to_archive_format(t))
+    ar_dates = [convert_to_archive_format(t) for t in tpls]
     # remove duplicates:
     results = []
     for d in ar_dates:
-        if not d in results:
+        if d not in results:
             results.append(d)
 
     return results

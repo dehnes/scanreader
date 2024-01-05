@@ -9,15 +9,14 @@ from config import CONFIG
 
 def is_supported_type(extension: str = "") -> bool:
     # Error conditions
-    if extension == "":
+    if not extension:
         return False  # TODO implementnException
     # load from config and ensure lower case
     supp = CONFIG.supported_filetypes
     supp = list(map(str.lower, supp))
     # clean extension
     e = extension.replace(".", "")  # remove the dots
-    e = e.lower()
-    return True if e in supp else False
+    return e.lower() in supp
 
 
 @dataclass

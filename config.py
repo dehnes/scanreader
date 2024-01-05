@@ -33,8 +33,7 @@ class Loader(object):
 
     @staticmethod
     def load_list(data: list):
-        result = [Loader.__load__(item) for item in data]
-        return result
+        return [Loader.__load__(item) for item in data]
 
     @staticmethod
     def load_json(path: str):
