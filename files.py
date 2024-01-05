@@ -10,7 +10,7 @@ from config import CONFIG
 def is_supported_type(extension: str = "") -> bool:
     # Error conditions
     if not extension:
-        return False  # TODO implementnException
+        return False  # TODO implement Exception
     # load from config and ensure lower case
     supp = CONFIG.supported_filetypes
     supp = list(map(str.lower, supp))

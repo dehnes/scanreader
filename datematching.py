@@ -1,6 +1,5 @@
 import datetime as dt
 import logging
-import pprint
 import re
 
 MONTHS_DICT = {
@@ -157,3 +156,10 @@ Test String 10.Feb.2023
 Test String 11. Aug 2043
 Test String 12. August 2019
 """
+
+
+def test_regex():
+    with open("test.txt") as f:
+        lines = f.read()
+
+        get_date_tuples_from_text(lines, test_mode=True)
