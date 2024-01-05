@@ -1,7 +1,11 @@
 import logging
+import os
+
+from uniquify import uniquify
 
 logger = logging.getLogger(__name__)
 
+import shutil
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -34,7 +38,6 @@ class Document:
     def run_matching(self):
         logger.info(comp_start(f"Running Matching in {self.source_file}"))
         self.run_ocr()
-        self.export_ocr_content()
         # Identify Date
         self._content_dates = get_archive_dates(self.ocr_content)
         logger.debug(f"Found dates: {self._content_dates}")
@@ -62,12 +65,6 @@ class Document:
         logger.info(comp_compl(f"Running OCR in {self.source_file}"))
         self.ocr_content = text
 
-    def export_ocr_content(self) -> None:
-        with open(CONFIG.paths.temp_path + CONFIG.content_file_name, "w") as f:
-            # TODO improve Method to wirte to separate file name
-            f.write(self.ocr_content)
-            f.close()
-
     def compose_file_name(self) -> str:
         ms = CONFIG.separators.main
         sp = CONFIG.separators.spacer
@@ -84,3 +81,33 @@ class Document:
         f = f"{f}{self.source_file.suffix}"
         logger.info(f"Composed: {f}")
         return f
+
+    def export(
+        self,
+        folder: str = CONFIG.paths.output_path,
+        ocr_folder: str = CONFIG.paths.output_ocr_path,
+    ):
+        self.export_file(folder)
+        self.export_ocr(ocr_folder)
+
+    def export_file(self, folder: str = CONFIG.paths.output_path) -> None:
+        # sourcery skip: class-extract-method
+        initial_name = self.compose_file_name()
+        logger.debug(f"Initial filename: {initial_name}")
+        unique_name = uniquify(initial_name, folder)
+        logger.debug(f"Unique filename: {unique_name}")
+        shutil.copy(self.source_file, folder + unique_name)
+        # TODO add try Except
+
+    def export_ocr(self, ocr_folder=CONFIG.paths.output_ocr_path) -> None:
+        initial_name = (
+            f"{os.path.splitext(os.path.basename(self.compose_file_name()))[0]}.txt"
+        )
+        logger.debug(f"Initial filename: {initial_name}")
+        unique_name = uniquify(initial_name, ocr_folder)
+        logger.debug(f"Unique filename: {unique_name}")
+
+        with open(ocr_folder + unique_name, "w") as f:
+            f.write(self.ocr_content)
+            f.close()
+        # TODO add try except

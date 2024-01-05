@@ -48,7 +48,7 @@ def analyze_files(files):
         clear_folder(CONFIG.paths.temp_path)
         d = Document(source_file=file)
         d.run_matching()
-        d.compose_file_name()
+        d.export()
     logger.info(comp_compl("Analyzing all Files"))
 
 
@@ -57,6 +57,12 @@ def main():
     # Initialize PIllow
     Image.MAX_IMAGE_PIXELS = 1000000000
     logger.info(comp_compl("Initializing"))
+
+    # Initialize App Settings
+    if CONFIG.dev_Settings.clear_output:
+        clear_folder(CONFIG.paths.output_path)
+        clear_folder(CONFIG.paths.output_ocr_path)
+
     # Read all the files
     files = read_files()
     analyze_files(files)
