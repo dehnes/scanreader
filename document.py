@@ -51,12 +51,12 @@ class Document:
         logger.info(comp_start(f"Running OCR in {self.source_file}"))
         img_files = []
         pdf_pages = convert_from_path(self.source_file, 500)
-        logger.debug(comp_start("  Converting pages ti image files"))
+        logger.debug(comp_start("  Converting pages to image files"))
         for page_enumeration, page in enumerate(pdf_pages, start=1):
             filename = f"tmp/page_{page_enumeration:03}.jpg"
             page.save(filename, "JPEG")
             img_files.append(filename)
-        logger.debug(comp_compl("  Converting pages ti image files"))
+        logger.debug(comp_compl("  Converting pages to image files"))
         logger.debug(comp_start("  Grabbing text from image files"))
         text = ""
         for img in img_files:
